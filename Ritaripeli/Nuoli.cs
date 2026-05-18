@@ -2,11 +2,11 @@
 {
     internal class Nuoli : Tavara
     {
-        public int Vahinko { get; private set; }
+        public int Vahinko { get; }
 
-        public Nuoli(int vahinko)
+        public Nuoli(string nimi, int dmg) : base(nimi)
         {
-            Vahinko = vahinko;
+            Vahinko = dmg;
         }
     }
 }

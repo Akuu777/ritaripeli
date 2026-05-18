@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ritaripeli
+﻿namespace ritaripeli
 {
     /// <summary>
     /// Tästä luokasta peritään kaikki erilaiset 
@@ -12,5 +6,11 @@ namespace ritaripeli
     /// </summary>
     internal abstract class Tavara
     {
+        public string Nimi { get; set; }
+
+        public Tavara(string nimi)
+        {
+            Nimi = nimi;
+        }
     }
 }

@@ -2,11 +2,11 @@
 {
     internal class Miekka : Tavara
     {
-        public int Vahinko { get; private set; }
+        public int Vahinko { get; }
 
-        public Miekka()
+        public Miekka(string nimi, int dmg) : base(nimi)
         {
-            Vahinko = 3;
+            Vahinko = dmg;
         }
     }
 }

@@ -9,12 +9,12 @@ namespace ritaripeli
 
         public IReadOnlyList<Tavara> Tavarat => tavarat;
 
-        public void Lisaa(Tavara t)
+        public void LisaaTavara(Tavara t)
         {
             tavarat.Add(t);
         }
 
-        public void Poista(Tavara t)
+        public void PoistaTavara(Tavara t)
         {
             tavarat.Remove(t);
         }
@@ -29,7 +29,7 @@ namespace ritaripeli
 
             for (int i = 0; i < tavarat.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {tavarat[i].GetType().Name}");
+                Console.WriteLine($"{i + 1}. {tavarat[i].Nimi}");
             }
         }
     }

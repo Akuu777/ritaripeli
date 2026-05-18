@@ -2,13 +2,11 @@
 {
     internal class Ruoka : Tavara
     {
-        public int ParannusMaara { get; private set; }
-        public string Nimi { get; private set; }
+        public int Parannus { get; }
 
-        public Ruoka(string nimi, int parannus)
+        public Ruoka(string nimi, int parannus) : base(nimi)
         {
-            Nimi = nimi;
-            ParannusMaara = parannus;
+            Parannus = parannus;
         }
     }
 }

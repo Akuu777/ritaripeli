@@ -6,9 +6,9 @@ namespace ritaripeli
     {
         private List<TavaraJaHinta> myytavat = new List<TavaraJaHinta>()
         {
-            new TavaraJaHinta(new Nuoli(1), 2),
-            new TavaraJaHinta(new Nuoli(2), 4),
-            new TavaraJaHinta(new Nuoli(3), 6)
+            new TavaraJaHinta(new Nuoli("Perusnouli", 1), 2),
+            new TavaraJaHinta(new Nuoli("Perusnouli", 2), 4),
+            new TavaraJaHinta(new Nuoli("Perusnuoli", 3), 6)
         };
 
         public List<TavaraJaHinta> ListaaTavarat()

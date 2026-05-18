@@ -1,71 +1,144 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ritaripeli;
 
-namespace ritaripeli
+internal class Ritaripeli
 {
-    internal class Ritaripeli
+    private Ritari ritari;
+    private IKauppa nuolikauppa;
+    private IKauppa ravintola;
+
+    public Ritaripeli()
     {
-        Ritari pelaaja;
-        List<Hirviö> hirviot;
-        List<IKauppa> kaupat;
-        public Ritaripeli()
-        {
-            pelaaja = new Ritari(aloitusOsumapisteet: 10, aloitusRahat: 10);
-            hirviot = new List<Hirviö>();
-            // TODO luo erilaiset hirviöt
-            kaupat = new List<IKauppa>();
-            // TODO luo erilaiset kaupat
-        }
+        ritari = new Ritari(10, 10);          // 10 HP, 10 kultaa
+        nuolikauppa = new Nuolikauppa();
+        ravintola = new Ravintola();
+    }
 
-        public void PeliSilmukka()
+    private void NuolikauppaTila()
+    {
+        bool jatka = true;
+
+        while (jatka)
         {
-            Print.Line("Tervetuloa suureen seikkailuun!");
-            while (true)
+            Print.Line("Tervetuloa nuolikauppaan!");
+            Print.Line("Valitse toiminto:");
+            Print.Line("1 Osta mittatilausnuoli");
+            Print.Line("2 Listaa kaupan tavarat");
+            Print.Line("3 Osta tavara");
+            Print.Line("4 Poistu");
+            Print.Write("> ");
+
+            string? valinta = Console.ReadLine();
+
+            switch (valinta)
             {
+                case "1":
+                    Print.Line("Mittatilausnuoli maksaa 5 kultarahaa.");
+                    if (ritari.Rahapussi.OtaRahaa(5) > 0)
+                    {
+                        ritari.Reppu.LisaaTavara(new Nuoli("Perusnuoli",3)); // 3 vahinkoa
+                        Print.Line("Ostit mittatilausnuolen!");
+                    }
+                    else
+                    {
+                        Print.Line("Sinulla ei ole tarpeeksi rahaa.");
+                    }
+                    break;
 
-                // TODO näytä pelaajan tilanne
-                Print.WriteColor("Tilanne: Osumapisteitä: ", ConsoleColor.White);
-                Print.WriteColor($"{pelaaja.Osumapisteet} op ", ConsoleColor.Green);
-                Print.WriteColor("Kultaa: ", ConsoleColor.White);
-                Print.LineColor($"{pelaaja.Rahapussi.Rahoja} kr", ConsoleColor.Yellow);
-                // TODO anna pelaajan valita meneekö kauppaan vai taistelemaan vai käyttääkö tavaroita Repusta
-                string valinta = Console.ReadLine();
+                case "2":
+                    ListaaKaupanTavarat(nuolikauppa);
+                    break;
 
+                case "3":
+                    OstaKaupasta(nuolikauppa);
+                    break;
 
+                case "4":
+                    jatka = false;
+                    break;
 
-                // Tarkista onko peli päättynyt
+                default:
+                    Print.Line("Virheellinen valinta.");
+                    break;
             }
-        }
-
-        public void TaisteluTila()
-        {
-            // TODO arvo pelaajaa vastaan taisteleva hirviö
-            Hirviö vastustaja = null;
-            while (vastustaja.Osumapisteet > 0 && pelaaja.Osumapisteet > 0)
-            {
-                // TODO anna pelaajan valita toiminto:
-                // 1. hyökkää : aiheuta vahinkoa hirviölle
-                // 2. käytä esinettä ; näytä Repun sisältö ja anna pelaajan valita tavara
-                // Jos pelaaja käyttää ruoka-annosta, lisää pelaajan osumapisteitä
-                // Jos pelaaja käyttää nuolta, ammu nuoli kohti vihollista
-                // Jos pelaaja käyttää jotain muuta tavaraa, toimi valinnan mukaan
-                // 3. pakene : poistu TaisteluTilasta
-
-                // TODO Jos hirviöllä on osumapisteitä jäljellä
-                // arvo hirviön tekemä vahinko ja vähennä se pelaajan osumapisteistä
-            }
-            // Kun taistelu loppuu, palaa PeliSilmukkaan
-        }
-
-        public void KauppaTila()
-        {
-            // TODO anna pelaajan valita mihin kauppaan pelaaja menee
-            // listaa kaupan tavarat ja anna pelaajan valita minkä hän haluaa
-            // yrittää ostaa
-            // lisää vaihtoehto jolla pelaaja pääsee pois kaupasta ja Kauppatilasta
         }
     }
+
+    private void ListaaKaupanTavarat(IKauppa kauppa)
+    {
+        var tavarat = kauppa.ListaaTavarat();
+        Print.Line("Kaupan tavarat:");
+        for (int i = 0; i < tavarat.Count; i++)
+        {
+            Print.Line($"{i + 1}: {tavarat[i].Esine.Nimi}  {tavarat[i].Hinta} kr");
+        }
+    }
+
+    private void OstaKaupasta(IKauppa kauppa)
+    {
+        ListaaKaupanTavarat(kauppa);
+        Print.Line("Minkä tavaran haluat ostaa?");
+        Print.Write("> ");
+
+        if (int.TryParse(Console.ReadLine(), out int valinta))
+        {
+            var ostettu = kauppa.OstaTavara(valinta - 1, ritari.Rahapussi);
+            if (ostettu != null)
+            {
+                ritari.Reppu.LisaaTavara(ostettu);
+                Print.Line($"Ostit tavaran {ostettu.Nimi}.");
+            }
+            else
+            {
+                Print.Line("Osto epäonnistui.");
+            }
+        }
+    }
+
+
+    public void Kaynnista()
+    {
+        bool jatka = true;
+
+        while (jatka && ritari.Osumapisteet > 0)
+        {
+            Print.Line("Tilanne: Sinulla on " +
+                       $"{ritari.Osumapisteet} osumapistettä ja {ritari.Rahapussi.Rahat} kultarahaa.");
+            Print.Line("Valitse toiminto:");
+            Print.Line("1 Mene nuolikauppaan");
+            Print.Line("2 Mene ravintolaan");
+            Print.Line("3 Lähde taisteluun");
+            Print.Line("4 Käytä repussa olevia esineitä");
+            Print.Line("5 Lopeta");
+            Print.Write("> ");
+
+            string? valinta = Console.ReadLine();
+
+            switch (valinta)
+            {
+                case "1":
+                    NuolikauppaTila();
+                    break;
+                case "2":
+                    RavintolaTila();
+                    break;
+                case "3":
+                    TaisteluTila();
+                    break;
+                case "4":
+                    ReppuTila();
+                    break;
+                case "5":
+                    jatka = false;
+                    break;
+                default:
+                    Print.Line("Virheellinen valinta.");
+                    break;
+            }
+        }
+
+        Print.Line("Peli päättyi.");
+    } 
+    private void RavintolaTila() { /* täytetään seuraavaksi */ }
+    private void TaisteluTila() { /* täytetään myöhemmin */ }
+    private void ReppuTila() { /* täytetään myöhemmin */ }
 }
