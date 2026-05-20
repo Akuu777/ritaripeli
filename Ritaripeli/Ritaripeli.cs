@@ -190,10 +190,58 @@ internal class Ritaripeli
         }
     }
 
-    private void TaisteluTila() 
+    private void ReppuTila()
+    {
+        bool jatka = true;
+
+        while (jatka)
+        {
+            Print.Line("Reppu:");
+            ritari.Reppu.Listaa();
+            Print.Line("Valitse esineen numero käyttääksesi sitä tai 0 poistuaksesi.");
+            Print.Write("> ");
+
+            string? syote = Console.ReadLine();
+
+            if (int.TryParse(syote, out int valinta))
+            {
+                if (valinta == 0)
+                {
+                    jatka = false;
+                    continue;
+                }
+
+                var tavarat = ritari.Reppu.Tavarat;
+
+                if (valinta > 0 && valinta <= tavarat.Count)
+                {
+                    var esine = tavarat[valinta - 1];
+
+                    if (esine is Ruoka ruoka)
+                    {
+                        ritari.OtaVahinkoa(-ruoka.Parannus);
+                        ritari.Reppu.PoistaTavara(esine);
+                        Print.Line($"Käytit esineen {ruoka.Nimi}. HP nyt {ritari.Osumapisteet}.");
+                    }
+                    else
+                    {
+                        Print.Line("Tätä esinettä ei voi käyttää.");
+                    }
+                }
+                else
+                {
+                    Print.Line("Virheellinen valinta.");
+                }
+            }
+            else
+            {
+                Print.Line("Virheellinen syöte.");
+            }
+        }
+    }
+
+    private void TaisteluTila()
     {
     }
-    private void ReppuTila() 
-    {
-    }
+
 }
