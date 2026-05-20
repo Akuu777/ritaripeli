@@ -137,8 +137,63 @@ internal class Ritaripeli
         }
 
         Print.Line("Peli päättyi.");
-    } 
-    private void RavintolaTila() { /* täytetään seuraavaksi */ }
-    private void TaisteluTila() { /* täytetään myöhemmin */ }
-    private void ReppuTila() { /* täytetään myöhemmin */ }
+    }
+    private void RavintolaTila()
+    {
+        bool jatka = true;
+
+        while (jatka)
+        {
+            Print.Line("Tervetuloa ravintolaan!");
+            Print.Line("Valitse toiminto:");
+            Print.Line("1 Osta pieni ateria (2 HP, 3 kr)");
+            Print.Line("2 Osta iso ateria (5 HP, 6 kr)");
+            Print.Line("3 Poistu");
+            Print.Write("> ");
+
+            string? valinta = Console.ReadLine();
+
+            switch (valinta)
+            {
+                case "1":
+                    if (ritari.Rahapussi.OtaRahaa(3) > 0)
+                    {
+                        ritari.Reppu.LisaaTavara(new Ruoka("Pieni ateria", 2));
+                        Print.Line("Ostit pienen aterian.");
+                    }
+                    else
+                    {
+                        Print.Line("Ei tarpeeksi rahaa.");
+                    }
+                    break;
+
+                case "2":
+                    if (ritari.Rahapussi.OtaRahaa(6) > 0)
+                    {
+                        ritari.Reppu.LisaaTavara(new Ruoka("Iso ateria", 5));
+                        Print.Line("Ostit ison aterian.");
+                    }
+                    else
+                    {
+                        Print.Line("Ei tarpeeksi rahaa.");
+                    }
+                    break;
+
+                case "3":
+                    jatka = false;
+                    break;
+
+                default:
+                    Print.Line("Virheellinen valinta.");
+                    break;
+            }
+        }
+    }
+
+    private void TaisteluTila() 
+    {
+    }
+    private void ReppuTila() 
+    {
+    }
 }
