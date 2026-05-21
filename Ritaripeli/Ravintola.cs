@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ritaripeli
+﻿namespace ritaripeli
 {
     internal class Ravintola : IKauppa
     {

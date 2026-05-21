@@ -1,4 +1,6 @@
-﻿namespace ritaripeli
+﻿using System;
+
+namespace ritaripeli
 {
     internal static class Print
     {

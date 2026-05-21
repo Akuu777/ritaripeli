@@ -2,7 +2,7 @@
 
 internal class Ritaripeli
 {
-    private List<Hirviö> hirviot = new()
+    private List<Hirviö> hirviot = new List<Hirviö>()
     {
         new Susi(),
         new Lohikaarme(),
@@ -22,7 +22,7 @@ internal class Ritaripeli
 
     private void ListaaKaupanTavarat(IKauppa kauppa)
     {
-        var tavarat = kauppa.ListaaTavarat();
+        List<TavaraJaHinta> tavarat = kauppa.ListaaTavarat();
 
         Print.Line("Kaupan tavarat:");
         for (int i = 0; i < tavarat.Count; i++)
@@ -38,18 +38,21 @@ internal class Ritaripeli
         Print.Line("Minkä tavaran haluat ostaa?");
         Print.Write("> ");
 
-        if (int.TryParse(Console.ReadLine(), out int valinta))
+        string syote = Console.ReadLine();
+        int valinta;
+
+        if (int.TryParse(syote, out valinta))
         {
-            var ostettu = kauppa.OstaTavara(valinta - 1, ritari.Rahapussi);
+            Tavara ostettu = kauppa.OstaTavara(valinta - 1, ritari.Rahapussi);
 
             if (ostettu != null)
             {
                 ritari.Reppu.LisaaTavara(ostettu);
-                Print.Line($"Ostit tavaran {ostettu.Nimi}.");
+                Print.LineColor($"Ostit tavaran {ostettu.Nimi}.", ConsoleColor.Green);
             }
             else
             {
-                Print.Line("Osto epäonnistui.");
+                Print.LineColor("Osto epäonnistui.", ConsoleColor.Red);
             }
         }
     }
@@ -62,13 +65,13 @@ internal class Ritaripeli
         {
             if (ritari.Voitot >= 3)
             {
-                Print.Line("Olet voittanut 3 hirviötä! Voitit pelin!");
+                Print.LineColor("Olet voittanut 3 hirviötä! Voitit pelin!", ConsoleColor.Green);
                 return;
             }
 
             if (ritari.Rahapussi.Rahat >= 30)
             {
-                Print.Line("Olet kerännyt 30 kultarahaa! Voitit pelin!");
+                Print.LineColor("Olet kerännyt 30 kultarahaa! Voitit pelin!", ConsoleColor.Green);
                 return;
             }
 
@@ -81,7 +84,7 @@ internal class Ritaripeli
             Print.Line("5 Lopeta");
             Print.Write("> ");
 
-            string? valinta = Console.ReadLine();
+            string valinta = Console.ReadLine();
 
             switch (valinta)
             {
@@ -106,12 +109,12 @@ internal class Ritaripeli
                     break;
 
                 default:
-                    Print.Line("Virheellinen valinta.");
+                    Print.LineColor("Virheellinen valinta.", ConsoleColor.Red);
                     break;
             }
         }
 
-        Print.Line("Peli päättyi.");
+        Print.LineColor("Peli päättyi.", ConsoleColor.Red);
     }
 
     private void ReppuTila()
@@ -126,9 +129,10 @@ internal class Ritaripeli
             Print.Line("Valitse esineen numero käyttääksesi sitä tai 0 poistuaksesi.");
             Print.Write("> ");
 
-            string? syote = Console.ReadLine();
+            string syote = Console.ReadLine();
+            int valinta;
 
-            if (int.TryParse(syote, out int valinta))
+            if (int.TryParse(syote, out valinta))
             {
                 if (valinta == 0)
                 {
@@ -136,54 +140,51 @@ internal class Ritaripeli
                     continue;
                 }
 
-                var tavarat = ritari.Reppu.Tavarat;
+                IReadOnlyList<Tavara> tavarat = ritari.Reppu.Tavarat;
 
                 if (valinta > 0 && valinta <= tavarat.Count)
                 {
-                    var esine = tavarat[valinta - 1];
+                    Tavara esine = tavarat[valinta - 1];
 
-                    // RUOKA
                     if (esine is Ruoka ruoka)
                     {
                         ritari.OtaVahinkoa(-ruoka.Parannus);
                         ritari.Reppu.PoistaTavara(esine);
-                        Print.Line($"Käytit esineen {ruoka.Nimi}. HP nyt {ritari.Osumapisteet}.");
+                        Print.LineColor($"Käytit {ruoka.Nimi}. HP nyt {ritari.Osumapisteet}.", ConsoleColor.Green);
                     }
                     else if (esine is Nuoli nuoli)
                     {
-                        Print.Line($"{nuoli.Nimi} ei tee mitään repussa. Käytä taistelussa!");
+                        Print.LineColor($"{nuoli.Nimi} ei tee mitään repussa. Käytä taistelussa!", ConsoleColor.DarkGray);
                     }
                     else if (esine is Miekka miekka)
                     {
                         ritari.Ase = miekka;
                         ritari.Reppu.PoistaTavara(esine);
-                        Print.Line($"Vaihdoit aseeksi: {miekka.Nimi}");
+                        Print.LineColor($"Vaihdoit aseeksi: {miekka.Nimi}", ConsoleColor.Green);
                     }
-
                     else
                     {
-                        Print.Line("Tätä esinettä ei voi käyttää.");
+                        Print.LineColor("Tätä esinettä ei voi käyttää.", ConsoleColor.Red);
                     }
                 }
                 else
                 {
-                    Print.Line("Virheellinen valinta.");
+                    Print.LineColor("Virheellinen valinta.", ConsoleColor.Red);
                 }
             }
             else
             {
-                Print.Line("Virheellinen syöte.");
+                Print.LineColor("Virheellinen syöte.", ConsoleColor.Red);
             }
         }
     }
-
 
     private void TaisteluTila()
     {
         Random rng = new Random();
         Hirviö hirvio = hirviot[rng.Next(hirviot.Count)];
 
-        Print.Line("Kohtaat hirviön: " + hirvio.Nimi + "!");
+        Print.LineColor("Kohtaat hirviön: " + hirvio.Nimi + "!", ConsoleColor.Yellow);
 
         while (hirvio.Osumapisteet > 0 && ritari.Osumapisteet > 0)
         {
@@ -199,13 +200,13 @@ internal class Ritaripeli
             {
                 int dmg = ritari.Ase.Vahinko;
                 hirvio.OtaVahinkoa(dmg);
-                Print.Line($"{ritari.Ase.Nimi} aiheutti {dmg} vahinkoa.");
+                Print.LineColor($"{ritari.Ase.Nimi} aiheutti {dmg} vahinkoa.", ConsoleColor.Green);
 
                 if (hirvio.Osumapisteet > 0)
                 {
                     int hv = hirvio.AnnaVahinko();
                     ritari.OtaVahinkoa(hv);
-                    Print.Line($"{hirvio.Nimi} lyö sinua ja aiheuttaa {hv} vahinkoa.");
+                    Print.LineColor($"{hirvio.Nimi} lyö sinua ja aiheuttaa {hv} vahinkoa.", ConsoleColor.Red);
                 }
             }
             else if (valinta == "2")
@@ -214,7 +215,10 @@ internal class Ritaripeli
                 ritari.Reppu.Listaa();
                 Print.Write("> ");
 
-                if (int.TryParse(Console.ReadLine(), out int esineValinta))
+                string esineSyote = Console.ReadLine();
+                int esineValinta;
+
+                if (int.TryParse(esineSyote, out esineValinta))
                 {
                     if (esineValinta > 0 && esineValinta <= ritari.Reppu.Tavarat.Count)
                     {
@@ -224,18 +228,18 @@ internal class Ritaripeli
                         {
                             ritari.OtaVahinkoa(-r.Parannus);
                             ritari.Reppu.PoistaTavara(esine);
-                            Print.Line($"Söit {r.Nimi} ja parannuit {r.Parannus}.");
+                            Print.LineColor($"Söit {r.Nimi} ja parannuit {r.Parannus}.", ConsoleColor.Green);
                         }
                         else if (esine is Nuoli n)
                         {
                             hirvio.OtaVahinkoa(n.Vahinko);
                             ritari.Reppu.PoistaTavara(esine);
-                            Print.Line($"{n.Nimi} aiheutti {n.Vahinko} vahinkoa.");
+                            Print.LineColor($"{n.Nimi} aiheutti {n.Vahinko} vahinkoa.", ConsoleColor.Green);
                         }
                         else if (esine is Miekka m)
                         {
                             ritari.Ase = m;
-                            Print.Line($"Vaihdoit aseeksi: {m.Nimi}");
+                            Print.LineColor($"Vaihdoit aseeksi: {m.Nimi}", ConsoleColor.Green);
                         }
                     }
                 }
@@ -244,29 +248,29 @@ internal class Ritaripeli
                 {
                     int hv = hirvio.AnnaVahinko();
                     ritari.OtaVahinkoa(hv);
-                    Print.Line($"{hirvio.Nimi} lyö sinua ja aiheuttaa {hv} vahinkoa.");
+                    Print.LineColor($"{hirvio.Nimi} lyö sinua ja aiheuttaa {hv} vahinkoa.", ConsoleColor.Red);
                 }
             }
             else if (valinta == "3")
             {
-                Print.Line("Pakenit taistelusta.");
+                Print.LineColor("Pakenit taistelusta.", ConsoleColor.DarkGray);
                 return;
             }
             else
             {
-                Print.Line("Virheellinen valinta.");
+                Print.LineColor("Virheellinen valinta.", ConsoleColor.Red);
             }
         }
 
         if (ritari.Osumapisteet <= 0)
         {
-            Print.Line("Hirviö voitti sinut.");
+            Print.LineColor("Hirviö voitti sinut.", ConsoleColor.Red);
             return;
         }
 
-        Print.Line($"Voitit hirviön: {hirvio.Nimi}!");
+        Print.LineColor($"Voitit hirviön: {hirvio.Nimi}!", ConsoleColor.Green);
         ritari.Rahapussi.LisaaRahaa(hirvio.KultaPalkinto);
-        Print.Line($"Saat {hirvio.KultaPalkinto} kultarahaa.");
+        Print.LineColor($"Saat {hirvio.KultaPalkinto} kultarahaa.", ConsoleColor.Yellow);
         ritari.Voitot++;
     }
 }

@@ -1,19 +1,22 @@
-﻿public class Lompakko
+﻿namespace ritaripeli
 {
-    public int Rahat { get; private set; }
-
-    public Lompakko(int aloitusRahat)
+    public class Lompakko
     {
-        Rahat = aloitusRahat;
-    }
+        public int Rahat { get; private set; }
 
-    public void LisaaRahaa(int maara)
-    {
-        Rahat += maara;
-    }
+        public Lompakko(int aloitusRahat)
+        {
+            Rahat = aloitusRahat;
+        }
 
-    public void VahennaRahaa(int maara)
-    {
-        Rahat -= maara;
+        public void LisaaRahaa(int maara)
+        {
+            Rahat += maara;
+        }
+
+        public void VahennaRahaa(int maara)
+        {
+            Rahat -= maara;
+        }
     }
 }
