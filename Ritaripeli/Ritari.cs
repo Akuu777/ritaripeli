@@ -1,23 +1,24 @@
-﻿namespace ritaripeli
+﻿using ritaripeli;
+
+internal class Ritari
 {
-    internal class Ritari
+    public int Osumapisteet { get; private set; }
+    public Lompakko Rahapussi { get; private set; }
+    public Reppu Reppu { get; private set; }
+    public int Voitot { get; set; }
+
+    public Miekka Ase { get; set; }
+
+    public Ritari(int hp, int raha)
     {
-        public int Osumapisteet { get; private set; }
-        public Lompakko Rahapussi { get; private set; }
-        public Reppu Reppu { get; private set; }
+        Osumapisteet = hp;
+        Rahapussi = new Lompakko(raha);
+        Reppu = new Reppu();
+        Ase = new Miekka("Perusmiekka", 3);
+    }
 
-        public Ritari(int aloitusOsumapisteet, int aloitusRahat)
-        {
-            Osumapisteet = aloitusOsumapisteet;
-            Rahapussi = new Lompakko(aloitusRahat);
-            Reppu = new Reppu();
-        }
-
-        public void OtaVahinkoa(int määrä)
-        {
-            Osumapisteet -= määrä;
-            if (Osumapisteet < 0)
-                Osumapisteet = 0;
-        }
+    public void OtaVahinkoa(int maara)
+    {
+        Osumapisteet -= maara;
     }
 }

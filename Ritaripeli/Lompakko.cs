@@ -1,24 +1,19 @@
-﻿internal class Lompakko
+﻿public class Lompakko
 {
-    private int rahat;
+    public int Rahat { get; private set; }
 
-    public Lompakko(int alkuRahat)
+    public Lompakko(int aloitusRahat)
     {
-        rahat = alkuRahat;
+        Rahat = aloitusRahat;
     }
 
-    public int Rahat
+    public void LisaaRahaa(int maara)
     {
-        get { return rahat; }
+        Rahat += maara;
     }
 
-    public int OtaRahaa(int maara)
+    public void VahennaRahaa(int maara)
     {
-        if (rahat >= maara)
-        {
-            rahat -= maara;
-            return maara;
-        }
-        return 0;
+        Rahat -= maara;
     }
 }

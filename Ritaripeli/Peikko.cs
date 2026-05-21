@@ -8,6 +8,7 @@
         {
             Nimi = "Peikko";
             Osumapisteet = 10;
+            KultaPalkinto = 5;
         }
 
         public override int AnnaVahinko()

@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-
-namespace ritaripeli
+﻿namespace ritaripeli
 {
     internal class Nuolikauppa : IKauppa
     {
         private List<TavaraJaHinta> myytavat = new List<TavaraJaHinta>()
         {
-            new TavaraJaHinta(new Nuoli("Perusnouli", 1), 2),
-            new TavaraJaHinta(new Nuoli("Perusnouli", 2), 4),
-            new TavaraJaHinta(new Nuoli("Perusnuoli", 3), 6)
+            new TavaraJaHinta(new Nuoli("Perusnuoli", 4), 2),
+            new TavaraJaHinta(new Nuoli("Hienonuoli", 6), 4),
+            new TavaraJaHinta(new Nuoli("Lohikäärmenuoli", 8), 6),
+            new TavaraJaHinta(new Miekka("Teräsmiekka", 5), 5),
+            new TavaraJaHinta(new Miekka("Kultamiekka", 7), 8)
         };
 
         public List<TavaraJaHinta> ListaaTavarat()
@@ -23,12 +23,13 @@ namespace ritaripeli
 
             TavaraJaHinta tuote = myytavat[valittuTavara];
 
-            int maksettu = rahapussi.OtaRahaa(tuote.Hinta);
+            if (rahapussi.Rahat >= tuote.Hinta)
+            {
+                rahapussi.VahennaRahaa(tuote.Hinta);
+                return tuote.Esine;
+            }
 
-            if (maksettu == 0)
-                return null;
-
-            return tuote.Esine;
+            return null;
         }
     }
 }

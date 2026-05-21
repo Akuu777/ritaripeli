@@ -7,12 +7,13 @@
         public Susi()
         {
             Nimi = "Susi";
-            Osumapisteet = 5;
+            Osumapisteet = 8;
+            KultaPalkinto = 3;
         }
 
         public override int AnnaVahinko()
         {
-            return rng.Next(1, 3);
+            return rng.Next(1, 4);
         }
 
         public override void OtaVahinkoa(int määrä)

@@ -7,12 +7,13 @@
         public Lohikaarme()
         {
             Nimi = "Lohikäärme";
-            Osumapisteet = 20;
+            Osumapisteet = 14;
+            KultaPalkinto = 8;
         }
 
         public override int AnnaVahinko()
         {
-            return rng.Next(4, 9);
+            return rng.Next(4, 7);
         }
 
         public override void OtaVahinkoa(int määrä)

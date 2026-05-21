@@ -2,70 +2,28 @@
 
 internal class Ritaripeli
 {
+    private List<Hirviö> hirviot = new()
+    {
+        new Susi(),
+        new Lohikaarme(),
+        new Peikko()
+    };
+
     private Ritari ritari;
     private IKauppa nuolikauppa;
     private IKauppa ravintola;
 
     public Ritaripeli()
     {
-        ritari = new Ritari(10, 10);          // 10 HP, 10 kultaa
+        ritari = new Ritari(10, 10);
         nuolikauppa = new Nuolikauppa();
         ravintola = new Ravintola();
-    }
-
-    private void NuolikauppaTila()
-    {
-        bool jatka = true;
-
-        while (jatka)
-        {
-            Print.Line("Tervetuloa nuolikauppaan!");
-            Print.Line("Valitse toiminto:");
-            Print.Line("1 Osta mittatilausnuoli");
-            Print.Line("2 Listaa kaupan tavarat");
-            Print.Line("3 Osta tavara");
-            Print.Line("4 Poistu");
-            Print.Write("> ");
-
-            string? valinta = Console.ReadLine();
-
-            switch (valinta)
-            {
-                case "1":
-                    Print.Line("Mittatilausnuoli maksaa 5 kultarahaa.");
-                    if (ritari.Rahapussi.OtaRahaa(5) > 0)
-                    {
-                        ritari.Reppu.LisaaTavara(new Nuoli("Perusnuoli",3)); // 3 vahinkoa
-                        Print.Line("Ostit mittatilausnuolen!");
-                    }
-                    else
-                    {
-                        Print.Line("Sinulla ei ole tarpeeksi rahaa.");
-                    }
-                    break;
-
-                case "2":
-                    ListaaKaupanTavarat(nuolikauppa);
-                    break;
-
-                case "3":
-                    OstaKaupasta(nuolikauppa);
-                    break;
-
-                case "4":
-                    jatka = false;
-                    break;
-
-                default:
-                    Print.Line("Virheellinen valinta.");
-                    break;
-            }
-        }
     }
 
     private void ListaaKaupanTavarat(IKauppa kauppa)
     {
         var tavarat = kauppa.ListaaTavarat();
+
         Print.Line("Kaupan tavarat:");
         for (int i = 0; i < tavarat.Count; i++)
         {
@@ -76,12 +34,14 @@ internal class Ritaripeli
     private void OstaKaupasta(IKauppa kauppa)
     {
         ListaaKaupanTavarat(kauppa);
+
         Print.Line("Minkä tavaran haluat ostaa?");
         Print.Write("> ");
 
         if (int.TryParse(Console.ReadLine(), out int valinta))
         {
             var ostettu = kauppa.OstaTavara(valinta - 1, ritari.Rahapussi);
+
             if (ostettu != null)
             {
                 ritari.Reppu.LisaaTavara(ostettu);
@@ -94,15 +54,25 @@ internal class Ritaripeli
         }
     }
 
-
     public void Kaynnista()
     {
         bool jatka = true;
 
         while (jatka && ritari.Osumapisteet > 0)
         {
-            Print.Line("Tilanne: Sinulla on " +
-                       $"{ritari.Osumapisteet} osumapistettä ja {ritari.Rahapussi.Rahat} kultarahaa.");
+            if (ritari.Voitot >= 3)
+            {
+                Print.Line("Olet voittanut 3 hirviötä! Voitit pelin!");
+                return;
+            }
+
+            if (ritari.Rahapussi.Rahat >= 30)
+            {
+                Print.Line("Olet kerännyt 30 kultarahaa! Voitit pelin!");
+                return;
+            }
+
+            Print.Line($"Tilanne: {ritari.Osumapisteet} HP, {ritari.Rahapussi.Rahat} kr");
             Print.Line("Valitse toiminto:");
             Print.Line("1 Mene nuolikauppaan");
             Print.Line("2 Mene ravintolaan");
@@ -116,20 +86,25 @@ internal class Ritaripeli
             switch (valinta)
             {
                 case "1":
-                    NuolikauppaTila();
+                    OstaKaupasta(nuolikauppa);
                     break;
+
                 case "2":
-                    RavintolaTila();
+                    OstaKaupasta(ravintola);
                     break;
+
                 case "3":
                     TaisteluTila();
                     break;
+
                 case "4":
                     ReppuTila();
                     break;
+
                 case "5":
                     jatka = false;
                     break;
+
                 default:
                     Print.Line("Virheellinen valinta.");
                     break;
@@ -137,57 +112,6 @@ internal class Ritaripeli
         }
 
         Print.Line("Peli päättyi.");
-    }
-    private void RavintolaTila()
-    {
-        bool jatka = true;
-
-        while (jatka)
-        {
-            Print.Line("Tervetuloa ravintolaan!");
-            Print.Line("Valitse toiminto:");
-            Print.Line("1 Osta pieni ateria (2 HP, 3 kr)");
-            Print.Line("2 Osta iso ateria (5 HP, 6 kr)");
-            Print.Line("3 Poistu");
-            Print.Write("> ");
-
-            string? valinta = Console.ReadLine();
-
-            switch (valinta)
-            {
-                case "1":
-                    if (ritari.Rahapussi.OtaRahaa(3) > 0)
-                    {
-                        ritari.Reppu.LisaaTavara(new Ruoka("Pieni ateria", 2));
-                        Print.Line("Ostit pienen aterian.");
-                    }
-                    else
-                    {
-                        Print.Line("Ei tarpeeksi rahaa.");
-                    }
-                    break;
-
-                case "2":
-                    if (ritari.Rahapussi.OtaRahaa(6) > 0)
-                    {
-                        ritari.Reppu.LisaaTavara(new Ruoka("Iso ateria", 5));
-                        Print.Line("Ostit ison aterian.");
-                    }
-                    else
-                    {
-                        Print.Line("Ei tarpeeksi rahaa.");
-                    }
-                    break;
-
-                case "3":
-                    jatka = false;
-                    break;
-
-                default:
-                    Print.Line("Virheellinen valinta.");
-                    break;
-            }
-        }
     }
 
     private void ReppuTila()
@@ -198,6 +122,7 @@ internal class Ritaripeli
         {
             Print.Line("Reppu:");
             ritari.Reppu.Listaa();
+
             Print.Line("Valitse esineen numero käyttääksesi sitä tai 0 poistuaksesi.");
             Print.Write("> ");
 
@@ -217,12 +142,24 @@ internal class Ritaripeli
                 {
                     var esine = tavarat[valinta - 1];
 
+                    // RUOKA
                     if (esine is Ruoka ruoka)
                     {
                         ritari.OtaVahinkoa(-ruoka.Parannus);
                         ritari.Reppu.PoistaTavara(esine);
                         Print.Line($"Käytit esineen {ruoka.Nimi}. HP nyt {ritari.Osumapisteet}.");
                     }
+                    else if (esine is Nuoli nuoli)
+                    {
+                        Print.Line($"{nuoli.Nimi} ei tee mitään repussa. Käytä taistelussa!");
+                    }
+                    else if (esine is Miekka miekka)
+                    {
+                        ritari.Ase = miekka;
+                        ritari.Reppu.PoistaTavara(esine);
+                        Print.Line($"Vaihdoit aseeksi: {miekka.Nimi}");
+                    }
+
                     else
                     {
                         Print.Line("Tätä esinettä ei voi käyttää.");
@@ -240,8 +177,96 @@ internal class Ritaripeli
         }
     }
 
+
     private void TaisteluTila()
     {
-    }
+        Random rng = new Random();
+        Hirviö hirvio = hirviot[rng.Next(hirviot.Count)];
 
+        Print.Line("Kohtaat hirviön: " + hirvio.Nimi + "!");
+
+        while (hirvio.Osumapisteet > 0 && ritari.Osumapisteet > 0)
+        {
+            Print.Line($"Oma op ({ritari.Osumapisteet})  Vihollinen ({hirvio.Osumapisteet})");
+            Print.Line("1 Hyökkää");
+            Print.Line("2 Käytä esinettä");
+            Print.Line("3 Pakene");
+            Print.Write("> ");
+
+            string valinta = Console.ReadLine();
+
+            if (valinta == "1")
+            {
+                int dmg = ritari.Ase.Vahinko;
+                hirvio.OtaVahinkoa(dmg);
+                Print.Line($"{ritari.Ase.Nimi} aiheutti {dmg} vahinkoa.");
+
+                if (hirvio.Osumapisteet > 0)
+                {
+                    int hv = hirvio.AnnaVahinko();
+                    ritari.OtaVahinkoa(hv);
+                    Print.Line($"{hirvio.Nimi} lyö sinua ja aiheuttaa {hv} vahinkoa.");
+                }
+            }
+            else if (valinta == "2")
+            {
+                Print.Line("Valitse esine:");
+                ritari.Reppu.Listaa();
+                Print.Write("> ");
+
+                if (int.TryParse(Console.ReadLine(), out int esineValinta))
+                {
+                    if (esineValinta > 0 && esineValinta <= ritari.Reppu.Tavarat.Count)
+                    {
+                        Tavara esine = ritari.Reppu.Tavarat[esineValinta - 1];
+
+                        if (esine is Ruoka r)
+                        {
+                            ritari.OtaVahinkoa(-r.Parannus);
+                            ritari.Reppu.PoistaTavara(esine);
+                            Print.Line($"Söit {r.Nimi} ja parannuit {r.Parannus}.");
+                        }
+                        else if (esine is Nuoli n)
+                        {
+                            hirvio.OtaVahinkoa(n.Vahinko);
+                            ritari.Reppu.PoistaTavara(esine);
+                            Print.Line($"{n.Nimi} aiheutti {n.Vahinko} vahinkoa.");
+                        }
+                        else if (esine is Miekka m)
+                        {
+                            ritari.Ase = m;
+                            Print.Line($"Vaihdoit aseeksi: {m.Nimi}");
+                        }
+                    }
+                }
+
+                if (hirvio.Osumapisteet > 0)
+                {
+                    int hv = hirvio.AnnaVahinko();
+                    ritari.OtaVahinkoa(hv);
+                    Print.Line($"{hirvio.Nimi} lyö sinua ja aiheuttaa {hv} vahinkoa.");
+                }
+            }
+            else if (valinta == "3")
+            {
+                Print.Line("Pakenit taistelusta.");
+                return;
+            }
+            else
+            {
+                Print.Line("Virheellinen valinta.");
+            }
+        }
+
+        if (ritari.Osumapisteet <= 0)
+        {
+            Print.Line("Hirviö voitti sinut.");
+            return;
+        }
+
+        Print.Line($"Voitit hirviön: {hirvio.Nimi}!");
+        ritari.Rahapussi.LisaaRahaa(hirvio.KultaPalkinto);
+        Print.Line($"Saat {hirvio.KultaPalkinto} kultarahaa.");
+        ritari.Voitot++;
+    }
 }
